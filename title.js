@@ -7,12 +7,24 @@
 function parseTitle (state) {
     var title = '';
     
+    // Parse the fields
     title = addField(state.query, '', '+', title);
     title = addField(state.brand, 'by', '-', title);
     title = addField(state.store, 'at', '-', title);
 
+    // Define recurrence of words in multiple fields
+    if (state.store != null && state.query != null) {
+    	var string = state.query;
+    	var substring = state.store;
+		if (string.includes(substring)) {
+			title = title.slice(state.store.length + 1)
+		}
+	}
+
     return title;
 }
+
+// 
 
 // Adding a field to the title
 //@param {string} field - the field to add to title
@@ -54,7 +66,15 @@ function addField (field, preposition, separator, title) {
 // Capitalize first letter of the word
 //@param {string} word - the word
 function capitalizeFirstLetter (word) {
-    return word.charAt(0).toUpperCase() + word.slice(1);
+    var capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+    // Capitalize first character after plus sign in string
+    var plusIndex = capitalizedWord.indexOf('+');
+    if (plusIndex >= 0) {
+    	return capitalizedWord.slice(0, plusIndex + 1) + capitalizedWord.charAt(plusIndex + 1).toUpperCase() + capitalizedWord.slice(plusIndex + 2);
+    }
+    else {
+    	return capitalizedWord;
+    }
 }
 
 // Thank you!
